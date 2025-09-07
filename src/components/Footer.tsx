@@ -20,20 +20,48 @@ const Footer = () => {
 
           {/* Social Links */}
           <div className="flex gap-4">
-            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary transition-colors"
-            onClick={() => window.open('https://github.com/LegendaryArk', '_blank', 'noopener,noreferrer')}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-muted-foreground hover:text-primary transition-colors"
+              onClick={() =>
+                window.open(
+                  "https://github.com/LegendaryArk",
+                  "_blank",
+                  "noopener,noreferrer"
+                )
+              }
+            >
               <Github className="h-5 w-5" />
             </Button>
-            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary transition-colors"
-            onClick={() => window.open('https://www.linkedin.com/in/sunnoah', '_blank', 'noopener,noreferrer')}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-muted-foreground hover:text-primary transition-colors"
+              onClick={() =>
+                window.open(
+                  "https://www.linkedin.com/in/sunnoah",
+                  "_blank",
+                  "noopener,noreferrer"
+                )
+              }
+            >
               <Linkedin className="h-5 w-5" />
             </Button>
-            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary transition-colors"
-            onClick={() => window.open('mailto:nn2sun@uwaterloo.ca')}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-muted-foreground hover:text-primary transition-colors"
+              onClick={() => window.open("mailto:nn2sun@uwaterloo.ca")}
+            >
               <Mail className="h-5 w-5" />
             </Button>
-            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary transition-colors"
-            onClick={() => window.open('', '_blank', 'noopener,noreferrer')}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-muted-foreground hover:text-primary transition-colors"
+              onClick={() => window.open("", "_blank", "noopener,noreferrer")}
+            >
               <FileText className="h-5 w-5" />
             </Button>
           </div>
