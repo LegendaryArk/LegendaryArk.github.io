@@ -27,13 +27,8 @@ const Hero = () => {
           Mechatronics Engineer at University of Waterloo
         </p>
         
-        <p className="text-lg md:text-xl text-muted-foreground/90 mb-8 max-w-2xl mx-auto animate-in slide-in-from-bottom-4 duration-1000 delay-300 leading-relaxed">
-          I design intelligent systems that bridge the physical and digital worlds through embedded software, 
-          robotics, and automation solutions.
-        </p>
-        
         {/* Action buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12 animate-in slide-in-from-bottom-4 duration-1000 delay-500">
+        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8 animate-in slide-in-from-bottom-4 duration-1000 delay-500">
           <Button 
             variant="hero" 
             size="lg"
@@ -51,7 +46,7 @@ const Hero = () => {
         </div>
         
         {/* Social links */}
-        <div className="flex justify-center gap-6 mb-12 animate-in slide-in-from-bottom-4 duration-1000 delay-700">
+        <div className="flex justify-center gap-6 mb-8 animate-in slide-in-from-bottom-4 duration-1000 delay-700">
           <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary transition-colors"
           onClick={() => window.open('https://github.com/LegendaryArk', '_blank', 'noopener,noreferrer')}>
             <Github className="h-5 w-5" />
