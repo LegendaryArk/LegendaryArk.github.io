@@ -81,7 +81,7 @@ const About = () => {
                 size="default"
                 onClick={() =>
                   window.open(
-                    "public/Noah_Sun_Resume.pdf",
+                    "/Noah_Sun_Resume.pdf",
                     "_blank",
                     "noopener,noreferrer"
                   )

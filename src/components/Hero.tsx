@@ -60,7 +60,7 @@ const Hero = () => {
             <Mail className="h-5 w-5" />
           </Button>
           <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary transition-colors"
-          onClick={() => window.open('public/Noah_Sun_Resume.pdf', '_blank', 'noopener,noreferrer')}>
+          onClick={() => window.open('/Noah_Sun_Resume.pdf', '_blank', 'noopener,noreferrer')}>
             <FileText className="h-5 w-5" />
           </Button>
         </div>
