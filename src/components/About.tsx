@@ -75,10 +75,11 @@ const About = () => {
                 </ul>
               </Card>
             ))}
-            <div className="flex flex-wrap justify-center items-center">
+            <div className="flex flex-wrap justify-center items-center p-2">
               <Button
                 variant="hero"
-                size="default"
+                size="sm"
+                className="text-xs sm:text-sm w-full whitespace-normal leading-tight py-4 sm:py-6 px-4 min-h-[3.5rem] sm:min-h-[2.5rem]"
                 onClick={() =>
                   window.open(
                     "/Noah_Sun_Resume.pdf",
@@ -87,8 +88,8 @@ const About = () => {
                   )
                 }
               >
-                <FileText className="h-5 w-5" />
-                Check out my Résumé!
+                <FileText className="h-4 w-4 flex-shrink-0" />
+                <span className="ml-1">Check out my Résumé!</span>
               </Button>
             </div>
           </div>

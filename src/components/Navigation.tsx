@@ -63,7 +63,8 @@ const Navigation = () => {
               window.scrollTo({ top: 0, behavior: "smooth" });
             }}
           >
-            Noah Sun
+            <span className="sm:hidden">Noah</span>
+            <span className="hidden sm:inline">Noah Sun</span>
           </a>
         </div>
 
