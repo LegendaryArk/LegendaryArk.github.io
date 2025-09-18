@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Github, Icon } from "lucide-react";
+import { ExternalLink, Github, Icon, ChevronDown, ChevronUp } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 import {
   siAirplayaudio,
   siAirplayvideo,
@@ -10,6 +11,74 @@ import {
 } from "simple-icons";
 
 const Projects = () => {
+  const [expandedProjects, setExpandedProjects] = useState<Set<number>>(new Set());
+  const [overflowingProjects, setOverflowingProjects] = useState<Set<number>>(new Set());
+  const [projectHeights, setProjectHeights] = useState<Map<number, { collapsed: number, expanded: number }>>(new Map());
+  const textRefs = useRef<Map<number, HTMLParagraphElement>>(new Map());
+
+  const toggleExpanded = (projectId: number) => {
+    const newExpanded = new Set(expandedProjects);
+    if (newExpanded.has(projectId)) {
+      newExpanded.delete(projectId);
+    } else {
+      newExpanded.add(projectId);
+    }
+    setExpandedProjects(newExpanded);
+  };
+
+  const checkOverflow = () => {
+    const newOverflowing = new Set<number>();
+    const newHeights = new Map<number, { collapsed: number, expanded: number }>();
+    
+    textRefs.current.forEach((element, projectId) => {
+      if (element) {
+        // Get expanded height first
+        element.style.webkitLineClamp = 'unset';
+        element.style.display = '-webkit-box';
+        const expandedHeight = element.scrollHeight;
+        
+        // Get collapsed height
+        element.style.webkitLineClamp = '3';
+        const collapsedHeight = element.clientHeight;
+        
+        // Store heights
+        newHeights.set(projectId, { collapsed: collapsedHeight, expanded: expandedHeight });
+        
+        // Check if overflowing
+        if (expandedHeight > collapsedHeight) {
+          newOverflowing.add(projectId);
+        }
+        
+        // Reset to current state
+        if (expandedProjects.has(projectId)) {
+          element.style.webkitLineClamp = 'unset';
+        }
+      }
+    });
+    
+    setProjectHeights(newHeights);
+    setOverflowingProjects(prev => new Set([...prev, ...newOverflowing]));
+  };
+
+  useEffect(() => {
+    // Check overflow after component mounts and when window resizes
+    const handleResize = () => {
+      setTimeout(checkOverflow, 100); // Small delay to ensure layout is complete
+    };
+
+    checkOverflow();
+    window.addEventListener('resize', handleResize);
+    
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const setTextRef = (projectId: number) => (el: HTMLParagraphElement | null) => {
+    if (el) {
+      textRefs.current.set(projectId, el);
+      // Check overflow after ref is set
+      setTimeout(checkOverflow, 100);
+    }
+  };
   const projects = [
     {
       id: 1,
@@ -97,9 +166,45 @@ const Projects = () => {
                   {project.title}
                 </h3>
 
-                <p className="text-muted-foreground mb-4 line-clamp-3 text-sm md:text-base leading-relaxed">
-                  {project.description}
-                </p>
+                <div className="mb-4">
+                  <div 
+                    className="overflow-hidden transition-all duration-500 ease-in-out"
+                    style={{
+                      height: expandedProjects.has(project.id) 
+                        ? `${projectHeights.get(project.id)?.expanded || 'auto'}px`
+                        : `${projectHeights.get(project.id)?.collapsed || 'auto'}px`
+                    }}
+                  >
+                    <p 
+                      ref={setTextRef(project.id)}
+                      className="text-muted-foreground text-sm md:text-base leading-relaxed -webkit-box"
+                      style={{
+                        display: '-webkit-box',
+                        WebkitBoxOrient: 'vertical',
+                        WebkitLineClamp: expandedProjects.has(project.id) ? 'unset' : 3,
+                        overflow: 'hidden'
+                      }}
+                    >
+                      {project.description}
+                    </p>
+                  </div>
+                  {(overflowingProjects.has(project.id) || expandedProjects.has(project.id)) && (
+                    <button
+                      onClick={() => toggleExpanded(project.id)}
+                      className="text-primary hover:text-primary/80 text-sm mt-2 flex items-center gap-1 transition-colors"
+                    >
+                      {expandedProjects.has(project.id) ? (
+                        <>
+                          Show less <ChevronUp className="w-4 h-4 transition-transform duration-200" />
+                        </>
+                      ) : (
+                        <>
+                          Show more <ChevronDown className="w-4 h-4 transition-transform duration-200" />
+                        </>
+                      )}
+                    </button>
+                  )}
+                </div>
 
                 <div className="flex flex-wrap gap-2 mb-6">
                   {project.tech.map((tech) => (
@@ -112,7 +217,7 @@ const Projects = () => {
                   ))}
                 </div>
 
-                <div className="flex gap-3">
+                <div className="flex flex-wrap gap-3">
                   {project.liveUrl.length == 0
                     ? null
                     : project.liveUrl.map((url, index) => {
