@@ -1,19 +1,19 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Github, Icon, ChevronDown, ChevronUp } from "lucide-react";
+import { Github, ChevronDown, ChevronUp } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
-import {
-  siAirplayaudio,
-  siAirplayvideo,
-  siApple,
-  siGoogle,
-  siGoogleplay,
-} from "simple-icons";
+import { siAirplayvideo, siApple, siGoogleplay } from "simple-icons";
 
 const Projects = () => {
-  const [expandedProjects, setExpandedProjects] = useState<Set<number>>(new Set());
-  const [overflowingProjects, setOverflowingProjects] = useState<Set<number>>(new Set());
-  const [projectHeights, setProjectHeights] = useState<Map<number, { collapsed: number, expanded: number }>>(new Map());
+  const [expandedProjects, setExpandedProjects] = useState<Set<number>>(
+    new Set()
+  );
+  const [overflowingProjects, setOverflowingProjects] = useState<Set<number>>(
+    new Set()
+  );
+  const [projectHeights, setProjectHeights] = useState<
+    Map<number, { collapsed: number; expanded: number }>
+  >(new Map());
   const textRefs = useRef<Map<number, HTMLParagraphElement>>(new Map());
 
   const toggleExpanded = (projectId: number) => {
@@ -28,36 +28,42 @@ const Projects = () => {
 
   const checkOverflow = () => {
     const newOverflowing = new Set<number>();
-    const newHeights = new Map<number, { collapsed: number, expanded: number }>();
-    
+    const newHeights = new Map<
+      number,
+      { collapsed: number; expanded: number }
+    >();
+
     textRefs.current.forEach((element, projectId) => {
       if (element) {
         // Get expanded height first
-        element.style.webkitLineClamp = 'unset';
-        element.style.display = '-webkit-box';
+        element.style.webkitLineClamp = "unset";
+        element.style.display = "-webkit-box";
         const expandedHeight = element.scrollHeight;
-        
+
         // Get collapsed height
-        element.style.webkitLineClamp = '3';
+        element.style.webkitLineClamp = "3";
         const collapsedHeight = element.clientHeight;
-        
+
         // Store heights
-        newHeights.set(projectId, { collapsed: collapsedHeight, expanded: expandedHeight });
-        
-        // Check if overflowing
+        newHeights.set(projectId, {
+          collapsed: collapsedHeight,
+          expanded: expandedHeight,
+        });
+
+        // Check if overflowing (only add to newOverflowing if actually overflowing)
         if (expandedHeight > collapsedHeight) {
           newOverflowing.add(projectId);
         }
-        
+
         // Reset to current state
         if (expandedProjects.has(projectId)) {
-          element.style.webkitLineClamp = 'unset';
+          element.style.webkitLineClamp = "unset";
         }
       }
     });
-    
+
     setProjectHeights(newHeights);
-    setOverflowingProjects(prev => new Set([...prev, ...newOverflowing]));
+    setOverflowingProjects(newOverflowing);
   };
 
   useEffect(() => {
@@ -67,18 +73,19 @@ const Projects = () => {
     };
 
     checkOverflow();
-    window.addEventListener('resize', handleResize);
-    
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const setTextRef = (projectId: number) => (el: HTMLParagraphElement | null) => {
-    if (el) {
-      textRefs.current.set(projectId, el);
-      // Check overflow after ref is set
-      setTimeout(checkOverflow, 100);
-    }
-  };
+  const setTextRef =
+    (projectId: number) => (el: HTMLParagraphElement | null) => {
+      if (el) {
+        textRefs.current.set(projectId, el);
+        // Check overflow after ref is set
+        setTimeout(checkOverflow, 100);
+      }
+    };
   const projects = [
     {
       id: 1,
@@ -167,39 +174,48 @@ const Projects = () => {
                 </h3>
 
                 <div className="mb-4">
-                  <div 
+                  <div
                     className="overflow-hidden transition-all duration-500 ease-in-out"
                     style={{
-                      height: expandedProjects.has(project.id) 
-                        ? `${projectHeights.get(project.id)?.expanded || 'auto'}px`
-                        : `${projectHeights.get(project.id)?.collapsed || 'auto'}px`
+                      height: expandedProjects.has(project.id)
+                        ? `${
+                            projectHeights.get(project.id)?.expanded || "auto"
+                          }px`
+                        : `${
+                            projectHeights.get(project.id)?.collapsed || "auto"
+                          }px`,
                     }}
                   >
-                    <p 
+                    <p
                       ref={setTextRef(project.id)}
                       className="text-muted-foreground text-sm md:text-base leading-relaxed -webkit-box"
                       style={{
-                        display: '-webkit-box',
-                        WebkitBoxOrient: 'vertical',
-                        WebkitLineClamp: expandedProjects.has(project.id) ? 'unset' : 3,
-                        overflow: 'hidden'
+                        display: "-webkit-box",
+                        WebkitBoxOrient: "vertical",
+                        WebkitLineClamp: expandedProjects.has(project.id)
+                          ? "unset"
+                          : 3,
+                        overflow: "hidden",
                       }}
                     >
                       {project.description}
                     </p>
                   </div>
-                  {(overflowingProjects.has(project.id) || expandedProjects.has(project.id)) && (
+                  {(overflowingProjects.has(project.id) ||
+                    expandedProjects.has(project.id)) && (
                     <button
                       onClick={() => toggleExpanded(project.id)}
                       className="text-primary hover:text-primary/80 text-sm mt-2 flex items-center gap-1 transition-colors"
                     >
                       {expandedProjects.has(project.id) ? (
                         <>
-                          Show less <ChevronUp className="w-4 h-4 transition-transform duration-200" />
+                          Show less{" "}
+                          <ChevronUp className="w-4 h-4 transition-transform duration-200" />
                         </>
                       ) : (
                         <>
-                          Show more <ChevronDown className="w-4 h-4 transition-transform duration-200" />
+                          Show more{" "}
+                          <ChevronDown className="w-4 h-4 transition-transform duration-200" />
                         </>
                       )}
                     </button>

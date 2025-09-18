@@ -5,7 +5,7 @@ import { FileText } from "lucide-react";
 const About = () => {
   const skills = [
     {
-      category: "Languages/Frameworks",
+      category: "Languages and Frameworks",
       items: ["C/C++", "Python", "Java", "Flutter"],
     },
     {
@@ -52,7 +52,7 @@ const About = () => {
               <p className="leading-relaxed">
                 Most recently, I co-founded and helped develop Elapse, a mobile
                 app designed to improve the experience for VEX Robotics teams,
-                achieving over 3200 downloads.
+                achieving over 3500 downloads.
               </p>
             </div>
           </div>
@@ -75,7 +75,7 @@ const About = () => {
                 </ul>
               </Card>
             ))}
-            <div className="flex justify-center items-center">
+            <div className="flex flex-wrap justify-center items-center">
               <Button
                 variant="hero"
                 size="default"
