@@ -88,11 +88,7 @@ const Hero = () => {
             size="icon"
             className="text-muted-foreground hover:text-primary transition-colors"
             onClick={() =>
-              window.open(
-                "/Noah_Sun_Resume.pdf",
-                "_blank",
-                "noopener,noreferrer"
-              )
+              document.getElementById("resume")?.scrollIntoView({ behavior: "smooth" })
             }
           >
             <FileText className="h-5 w-5" />

@@ -2,7 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Github, ChevronDown, ChevronUp } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
-import { siAirplayvideo, siApple, siGoogleplay } from "simple-icons";
+import { siAirplayvideo, siApple, siGoogleplay, siYoutube } from "simple-icons";
 
 const Projects = () => {
   const [expandedProjects, setExpandedProjects] = useState<Set<number>>(
@@ -14,16 +14,20 @@ const Projects = () => {
   const [projectHeights, setProjectHeights] = useState<
     Map<number, { collapsed: number; expanded: number }>
   >(new Map());
+  const [collapsingProjects, setCollapsingProjects] = useState<Set<number>>(new Set());
   const textRefs = useRef<Map<number, HTMLParagraphElement>>(new Map());
 
   const toggleExpanded = (projectId: number) => {
-    const newExpanded = new Set(expandedProjects);
-    if (newExpanded.has(projectId)) {
-      newExpanded.delete(projectId);
+    const isExpanded = expandedProjects.has(projectId);
+    if (isExpanded) {
+      // Start collapse animation: keep content expanded until transition end
+      setCollapsingProjects((prev) => new Set(prev).add(projectId));
     } else {
+      // Expand immediately
+      const newExpanded = new Set(expandedProjects);
       newExpanded.add(projectId);
+      setExpandedProjects(newExpanded);
     }
-    setExpandedProjects(newExpanded);
   };
 
   const checkOverflow = () => {
@@ -35,14 +39,20 @@ const Projects = () => {
 
     textRefs.current.forEach((element, projectId) => {
       if (element) {
-        // Get expanded height first
-        element.style.webkitLineClamp = "unset";
+        // Measure collapsed height (clamped to 3 lines)
         element.style.display = "-webkit-box";
-        const expandedHeight = element.scrollHeight;
-
-        // Get collapsed height
-        element.style.webkitLineClamp = "3";
+        (element.style as any).WebkitBoxOrient = "vertical";
+        (element.style as any).WebkitLineClamp = "3";
+        element.style.overflow = "hidden";
+        void element.offsetHeight; // Force reflow
         const collapsedHeight = element.clientHeight;
+
+        // Measure expanded height (no clamp)
+        element.style.display = "block";
+        (element.style as any).WebkitLineClamp = "";
+        element.style.overflow = "visible";
+        void element.offsetHeight; // Force reflow
+        const expandedHeight = element.scrollHeight;
 
         // Store heights
         newHeights.set(projectId, {
@@ -50,14 +60,22 @@ const Projects = () => {
           expanded: expandedHeight,
         });
 
-        // Check if overflowing (only add to newOverflowing if actually overflowing)
-        if (expandedHeight > collapsedHeight) {
+        // Check if overflowing
+        if (expandedHeight > collapsedHeight + 1) {
+          // +1 for rounding errors
           newOverflowing.add(projectId);
         }
 
         // Reset to current state
         if (expandedProjects.has(projectId)) {
-          element.style.webkitLineClamp = "unset";
+          element.style.display = "block";
+          (element.style as any).WebkitLineClamp = "";
+          element.style.overflow = "visible";
+        } else {
+          element.style.display = "-webkit-box";
+          (element.style as any).WebkitBoxOrient = "vertical";
+          (element.style as any).WebkitLineClamp = "3";
+          element.style.overflow = "hidden";
         }
       }
     });
@@ -68,11 +86,17 @@ const Projects = () => {
 
   useEffect(() => {
     // Check overflow after component mounts and when window resizes
+    let resizeRaf = 0;
     const handleResize = () => {
-      setTimeout(checkOverflow, 100); // Small delay to ensure layout is complete
+      if (resizeRaf) cancelAnimationFrame(resizeRaf);
+      resizeRaf = requestAnimationFrame(() => {
+        checkOverflow();
+      });
     };
 
-    checkOverflow();
+    requestAnimationFrame(() => {
+      checkOverflow();
+    });
     window.addEventListener("resize", handleResize);
 
     return () => window.removeEventListener("resize", handleResize);
@@ -82,13 +106,28 @@ const Projects = () => {
     (projectId: number) => (el: HTMLParagraphElement | null) => {
       if (el) {
         textRefs.current.set(projectId, el);
-        // Check overflow after ref is set
-        setTimeout(checkOverflow, 100);
+        // Check overflow after ref is set on next frame
+        requestAnimationFrame(() => {
+          checkOverflow();
+        });
       }
     };
+
   const projects = [
     {
       id: 1,
+      title: "Autonomous Robot Control System",
+      description:
+        "A control system for an autonomous robot using ROS2 and C++. Fused LiDAR data and odometry for precise navigation and obstacle avoidance. Then implemented path planning using A* Search Algorithm to navigate complex environments and followed the path using a Pure Pursuit and PID controller.",
+      tech: ["ROS2", "C++", "Git", "Odometry", "LiDAR", "PID Control"],
+      image: "/ARCS Image.jpg",
+      liveUrl: ["https://youtu.be/CKogSlk9C5I"],
+      liveIcon: [siYoutube],
+      liveText: ["Demo Video"],
+      githubUrl: "https://github.com/LegendaryArk/wato_asd_training",
+    },
+    {
+      id: 2,
       title: "Elapse",
       description:
         "A tournament companion app for VEX Robotics teams. Features adaptive match schedules, innovative scouting system, and real-time match notifications.",
@@ -103,11 +142,11 @@ const Projects = () => {
       githubUrl: "https://github.com/elapse-app/elapse",
     },
     {
-      id: 2,
+      id: 3,
       title: "ArkLib",
       description:
         "A C++ library made for VEX Robotics teams to streamline robot programming using OOP. Includes modules for motion algorithms, odometry, and control systems.",
-      tech: ["C++", "OOP", "PID", "Motion Algorithms", "Git"],
+      tech: ["C++", "OOP", "PID Control", "Motion Algorithms", "Git"],
       image:
         "https://res.cloudinary.com/djqjwhwmv/image/upload/v1757125844/bot_wevwkj.png",
       liveUrl: [
@@ -118,7 +157,7 @@ const Projects = () => {
       githubUrl: "https://github.com/16868C/VRC2425-HighStakes",
     },
     {
-      id: 3,
+      id: 4,
       title: "Mentorful",
       description:
         "A mobile app designed to assist in rehabilitation and reducing recidivism through personalized reminders and scoring systems. Developed in a team of four using Flutter and FastAPI at Hack404.",
@@ -131,7 +170,7 @@ const Projects = () => {
       githubUrl: "https://github.com/LegendaryArk/Mentorful",
     },
     {
-      id: 4,
+      id: 5,
       title: "Boggle",
       description:
         "A digital version of the classic Boggle word game with an AI opponent. Led a team of four in designing and implementing the game using Java and JavaFX.",
@@ -177,25 +216,47 @@ const Projects = () => {
                   <div
                     className="overflow-hidden transition-all duration-500 ease-in-out"
                     style={{
-                      height: expandedProjects.has(project.id)
-                        ? `${
-                            projectHeights.get(project.id)?.expanded || "auto"
-                          }px`
-                        : `${
-                            projectHeights.get(project.id)?.collapsed || "auto"
-                          }px`,
+                      height: collapsingProjects.has(project.id)
+                        ? `${projectHeights.get(project.id)?.collapsed || "auto"}px`
+                        : expandedProjects.has(project.id)
+                        ? `${projectHeights.get(project.id)?.expanded || "auto"}px`
+                        : `${projectHeights.get(project.id)?.collapsed || "auto"}px`,
+                    }}
+                    onTransitionEnd={(e) => {
+                      if (e.propertyName === "height") {
+                        if (collapsingProjects.has(project.id)) {
+                          // Now clamp and mark as collapsed
+                          setExpandedProjects((prev) => {
+                            const next = new Set(prev);
+                            next.delete(project.id);
+                            return next;
+                          });
+                          setCollapsingProjects((prev) => {
+                            const next = new Set(prev);
+                            next.delete(project.id);
+                            return next;
+                          });
+                        }
+                      }
                     }}
                   >
                     <p
                       ref={setTextRef(project.id)}
                       className="text-muted-foreground text-sm md:text-base leading-relaxed -webkit-box"
                       style={{
-                        display: "-webkit-box",
+                        display:
+                          expandedProjects.has(project.id) || collapsingProjects.has(project.id)
+                            ? "block"
+                            : "-webkit-box",
                         WebkitBoxOrient: "vertical",
-                        WebkitLineClamp: expandedProjects.has(project.id)
-                          ? "unset"
-                          : 3,
-                        overflow: "hidden",
+                        WebkitLineClamp:
+                          expandedProjects.has(project.id) || collapsingProjects.has(project.id)
+                            ? ""
+                            : 3,
+                        overflow:
+                          expandedProjects.has(project.id) || collapsingProjects.has(project.id)
+                            ? "visible"
+                            : "hidden",
                       }}
                     >
                       {project.description}

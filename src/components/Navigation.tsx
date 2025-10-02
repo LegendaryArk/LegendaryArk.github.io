@@ -24,7 +24,7 @@ const Navigation = () => {
       );
 
       // Track active section
-      const sections = ["about", "projects", "contact"];
+      const sections = ["about", "projects", "resume", "contact"];
       const scrollPositionWithOffset = scrollPosition + 100;
 
       for (const section of sections) {
@@ -83,6 +83,13 @@ const Navigation = () => {
               className="cursor-pointer px-4 py-2 text-sm rounded-full data-[state=active]:bg-primary/10 data-[state=active]:text-primary"
             >
               Projects
+            </TabsTrigger>
+            <TabsTrigger
+              value="resume"
+              onClick={() => scrollToSection("resume")}
+              className="cursor-pointer px-4 py-2 text-sm rounded-full data-[state=active]:bg-primary/10 data-[state=active]:text-primary"
+            >
+              Résumé
             </TabsTrigger>
             <TabsTrigger
               value="contact"

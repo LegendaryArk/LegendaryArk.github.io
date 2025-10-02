@@ -6,20 +6,20 @@ const About = () => {
   const skills = [
     {
       category: "Languages and Frameworks",
-      items: ["C/C++", "Python", "Java", "Flutter"],
+      items: ["C/C++", "Python", "Java", "ROS2"],
     },
     {
       category: "Control Systems",
       items: [
         "PID Control",
         "State Machines",
-        "Real-time Systems",
+        "FreeRTOS",
         "Sensors/Actuators",
       ],
     },
     {
       category: "Development Tools",
-      items: ["Git", "Solidworks", "Fusion 360", "AutoCAD"],
+      items: ["Git", "Docker", "Solidworks", "AutoCAD"],
     },
   ];
 
@@ -81,11 +81,7 @@ const About = () => {
                 size="sm"
                 className="text-xs sm:text-sm w-full whitespace-normal leading-tight py-4 sm:py-6 px-4 min-h-[3.5rem] sm:min-h-[2.5rem]"
                 onClick={() =>
-                  window.open(
-                    "/Noah_Sun_Resume.pdf",
-                    "_blank",
-                    "noopener,noreferrer"
-                  )
+                  document.getElementById("resume")?.scrollIntoView({ behavior: "smooth" })
                 }
               >
                 <FileText className="h-4 w-4 flex-shrink-0" />
